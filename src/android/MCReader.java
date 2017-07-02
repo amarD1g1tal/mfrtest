@@ -17,7 +17,7 @@ import android.nfc.tech.NfcA;
 //import android.os.Parcel;
 import android.util.Log;
 //import android.util.SparseArray;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 //import de.syss.MifareClassicTool.Activities.Preferences.Preference;
 

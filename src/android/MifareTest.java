@@ -32,14 +32,14 @@ import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
+//import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 //import android.util.SparseArray;
 //import android.widget.Toast;
 import android.nfc.TagLostException;
-import net.digitaledu.mifaretest.MCReader;
+//import net.digitaledu.mifaretest.MCReader;
 
 public class MifareTest extends CordovaPlugin{
         
