@@ -33,7 +33,7 @@ import android.nfc.tech.NfcA;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
+//import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -63,7 +63,7 @@ public class MifareTest extends CordovaPlugin{
                 try {
                         if (ACTION_TAG_READ_SECTOR.equals(action)) { 
                                 sectorData=readSector(0,"FFFFFFFFFFFF",false);
-                                callbackContext.success(sectorData);
+                                callbackContext.success("Successful");
                                 return true;
                         }
                 }catch(Exception e) {
@@ -114,7 +114,7 @@ public class MifareTest extends CordovaPlugin{
                     } catch (IOException e) {
                         // Could not read block.
                         // (Maybe due to key/authentication method.)
-                        Log.d(LOG_TAG, "(Recoverable) Error while reading block "
+                        Log.d("String=>", "(Recoverable) Error while reading block "
                                 + i + " from tag.");
                         if (!mMFC.isConnected()) {
                             throw new TagLostException(
@@ -169,7 +169,7 @@ public class MifareTest extends CordovaPlugin{
                                          + Character.digit(s.charAt(i+1), 16));
                 }
             } catch (Exception e) {
-                Log.d(LOG_TAG, "Argument(s) for hexStringToByteArray(String s)"
+                Log.d("String=>", "Argument(s) for hexStringToByteArray(String s)"
                         + "was not a hex string");
             }
             return data;
