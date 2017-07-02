@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        id="mifaretest"
+        version="0.7.0">
+
+  <name>Mifare Testing</name>
+
+  <engines>
+    <engine name="cordova" version=">=3.4.0"/>
+  </engines>
+
+  <asset src="www/js/MifarePlugin.js" target="js/MifarePlugin.js"/>
+
+  <js-module src="www/js/MifarePlugin.js" name="MifarePlugin">
+    <clobbers target="MifarePlugin" />
+  </js-module>
+
+  <platform name="android">
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="MifarePlugin">
+        <param name="android-package" value="mifaretest.MifarePlugin"/>
+      </feature>
+    </config-file>
+
+    <source-file src="src/mifaretest/MifareTest.java" target-dir="src/mifaretest/"/>
+  </platform>
+
+</plugin>
