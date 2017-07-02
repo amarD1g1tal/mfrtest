@@ -38,8 +38,9 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 //import android.util.SparseArray;
-import android.widget.Toast;
+//import android.widget.Toast;
 import android.nfc.TagLostException;
+import net.digitaledu.mifaretest.MCReader;
 
 public class MifareTest extends CordovaPlugin{
         
@@ -55,6 +56,12 @@ public class MifareTest extends CordovaPlugin{
         private String[] mRawDump;
         
         public String[] sectorData;
+        
+        /**
+        * The last detected tag.
+        * Set by {@link #treatAsNewTag(Intent, Context)}
+        */
+       private Tag mTag = null;
         
         public static final String ACTION_TAG_READ_SECTOR = "readTag"; 
         
@@ -124,8 +131,8 @@ public class MifareTest extends CordovaPlugin{
            }
 
            // Error. The tag is gone.
-           Toast.makeText(context, R.string.info_no_tag_found,
-                   Toast.LENGTH_LONG).show();
+//           Toast.makeText(context, R.string.info_no_tag_found,
+//                   Toast.LENGTH_LONG).show();
            return null;
        }
         

@@ -55,7 +55,7 @@ public class MCReader {
     public static final String NO_DATA = "--------------------------------";
 
     private final MifareClassic mMFC;
-    private SparseArray<byte[][]> mKeyMap = new SparseArray<byte[][]>();
+//    private SparseArray<byte[][]> mKeyMap = new SparseArray<byte[][]>();
     private int mKeyMapStatus = 0;
     private int mLastSector = -1;
     private int mFirstSector = 0;
@@ -85,7 +85,7 @@ public class MCReader {
      * @return {@link MCReader} object or "null" if tag is "null" or tag is
      * not MIFARE Classic.
      */
-    public MCReader get(Tag tag) {
+    public static MCReader get(Tag tag) {
         MCReader mcr = null;
         if (tag != null) {
             mcr = new MCReader(tag);
@@ -236,25 +236,6 @@ public class MCReader {
                 && (c2 == 0 && c3 == 0)
                 || (c2 == 1 && c3 == 0)
                 || (c2 == 0 && c3 == 1);
-    }
-
-    /**
-     * Get the key map built from {@link #buildNextKeyMapPart()} with
-     * the given key file ({@link #setKeyFile(File[], Context)}). If you want a
-     * full key map, you have to call {@link #buildNextKeyMapPart()} as
-     * often as there are sectors on the tag
-     * (See {@link #getSectorCount()}).
-     * @return A Key-Value Pair. Keys are the sector numbers,
-     * values are the MIFARE keys.
-     * The MIFARE keys are 2D arrays with key type (first dimension, 0-1,
-     * 0 = KeyA / 1 = KeyB) and key (second dimension, 0-6). If a key is "null"
-     * it means that the key A or B (depending in the first dimension) could not
-     * be found.
-     * @see #getSectorCount()
-     * @see #buildNextKeyMapPart()
-     */
-    public SparseArray<byte[][]> getKeyMap() {
-        return mKeyMap;
     }
 
     public boolean isMifareClassic() {
