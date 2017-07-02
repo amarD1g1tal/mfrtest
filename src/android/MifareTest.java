@@ -1,6 +1,10 @@
 
 package net.digitaledu.mifaretest;
 
+import org.apache.cordova.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,7 +41,7 @@ import android.util.SparseArray;
 import android.widget.Toast;
 import android.nfc.TagLostException;
 
-public class MifareTest{
+public class MifareTest extends CordovaPlugin{
         
         private final MifareClassic mMFC;
         
@@ -110,7 +114,7 @@ public class MifareTest{
                     } catch (IOException e) {
                         // Could not read block.
                         // (Maybe due to key/authentication method.)
-                        Log.d("(Recoverable) Error while reading block "
+                        Log.d(LOG_TAG, "(Recoverable) Error while reading block "
                                 + i + " from tag.");
                         if (!mMFC.isConnected()) {
                             throw new TagLostException(
@@ -165,7 +169,7 @@ public class MifareTest{
                                          + Character.digit(s.charAt(i+1), 16));
                 }
             } catch (Exception e) {
-                Log.d("Argument(s) for hexStringToByteArray(String s)"
+                Log.d(LOG_TAG, "Argument(s) for hexStringToByteArray(String s)"
                         + "was not a hex string");
             }
             return data;
@@ -228,3 +232,4 @@ public class MifareTest{
     }
         
 }
+
