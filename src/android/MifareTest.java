@@ -43,8 +43,6 @@ import android.nfc.TagLostException;
 
 public class MifareTest extends CordovaPlugin{
         
-        private final MifareClassic mMFC;
-        
         /**
          * Placeholder for not found keys.
          */
@@ -54,6 +52,8 @@ public class MifareTest extends CordovaPlugin{
          */
         public static final String NO_DATA = "--------------------------------";
         
+        private String[] mRawDump;
+        
         public String[] sectorData;
         
         public static final String ACTION_TAG_READ_SECTOR = "readTag"; 
@@ -62,8 +62,9 @@ public class MifareTest extends CordovaPlugin{
         public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
                 try {
                         if (ACTION_TAG_READ_SECTOR.equals(action)) { 
-                                sectorData=readSector(0,"FFFFFFFFFFFF",false);
-                                callbackContext.success("Successful");
+                                readTag();
+                                String str = Arrays.toString(mRawDump);
+                                callbackContext.success(str);
                                 return true;
                         }
                 }catch(Exception e) {
@@ -74,85 +75,59 @@ public class MifareTest extends CordovaPlugin{
                 return true;
         }
         
-        public String[] readSector(int sectorIndex, String keyString,
-            boolean useAsKeyB) throws TagLostException {
-            
-            byte[] key = hexStringToByteArray(keyString);
-            
-            boolean auth = authenticate(sectorIndex, key, useAsKeyB);
-            String[] ret = null;
-            // Read sector.
-            if (auth) {
-                // Read all blocks.
-                ArrayList<String> blocks = new ArrayList<String>();
-                int firstBlock = mMFC.sectorToBlock(sectorIndex);
-                int lastBlock = firstBlock + 4;
-                if (mMFC.getSize() == MifareClassic.SIZE_4K
-                        && sectorIndex > 31) {
-                    lastBlock = firstBlock + 16;
-                }
-                for (int i = firstBlock; i < lastBlock; i++) {
-                    try {
-                        byte blockBytes[] = mMFC.readBlock(i);
-                        // mMFC.readBlock(i) must return 16 bytes or throw an error.
-                        // At least this is what the documentation says.
-                        // On Samsung's Galaxy S5 and Sony's Xperia Z2 however, it
-                        // sometimes returns < 16 bytes for unknown reasons.
-                        // Update: Aaand sometimes it returns more than 16 bytes...
-                        // The appended byte(s) are 0x00.
-                        if (blockBytes.length < 16) {
-                            throw new IOException();
-                        }
-                        if (blockBytes.length > 16) {
-                            byte[] blockBytesTmp = Arrays.copyOf(blockBytes,16);
-                            blockBytes = blockBytesTmp;
-                        }
+        /**
+        * Triggered by {@link #onActivityResult(int, int, Intent)}
+        * this method starts a worker thread that first reads the tag and then
+        * calls {@link #createTagDump(SparseArray)}.
+        */
+       private void readTag() {
+           mRawDump=null;
+           final MCReader reader = checkForTagAndCreateReader(this);
+           if (reader == null) {
+               return;
+           }
+           new Thread(new Runnable() {
+               @Override
+               public void run() {
+                   // Get key map from glob. variable.
+                   mRawDump = reader.readSector(0,"FFFFFFFFFFFF",false);
 
-                        blocks.add(byte2HexString(blockBytes));
-                    } catch (TagLostException e) {
-                        throw e;
-                    } catch (IOException e) {
-                        // Could not read block.
-                        // (Maybe due to key/authentication method.)
-                        Log.d("String=>", "(Recoverable) Error while reading block "
-                                + i + " from tag.");
-                        if (!mMFC.isConnected()) {
-                            throw new TagLostException(
-                                    "Tag removed during readSector(...)");
-                        }
-                        // After an error, a re-authentication is needed.
-                        authenticate(sectorIndex, key, useAsKeyB);
-                    }
-                }
-                ret = blocks.toArray(new String[blocks.size()]);
-                int last = ret.length -1;
+                   reader.close();
+               }
+           }).start();
+       }
+       
+       /**
+        * Create a connected {@link MCReader} if there is a present MIFARE Classic
+        * tag. If there is no MIFARE Classic tag an error
+        * message will be displayed to the user.
+        * @param context The Context in which the error Toast will be shown.
+        * @return A connected {@link MCReader} or "null" if no tag was present.
+        */
+       public MCReader checkForTagAndCreateReader(Context context) {
+           MCReader reader;
+           boolean tagLost = false;
+           // Check for tag.
+           if (mTag != null && (reader = MCReader.get(mTag)) != null) {
+               try {
+                   reader.connect();
+               } catch (Exception e) {
+                   tagLost = true;
+               }
+               if (!tagLost && !reader.isConnected()) {
+                   reader.close();
+                   tagLost = true;
+               }
+               if (!tagLost) {
+                   return reader;
+               }
+           }
 
-                // Merge key in last block (sector trailer).
-                if (!useAsKeyB) {
-                    if (isKeyBReadable(hexStringToByteArray(
-                            ret[last].substring(12, 20)))) {
-                        ret[last] = byte2HexString(key)
-                                + ret[last].substring(12, 32);
-                    } else {
-                        ret[last] = byte2HexString(key)
-                                + ret[last].substring(12, 20) + NO_KEY;
-                    }
-                } else {
-                    if (ret[0].equals(NO_DATA)) {
-                        // If Key B may be read in the corresponding Sector Trailer,
-                        // it cannot serve for authentication (according to NXP).
-                        // What they mean is that you can authenticate successfully,
-                        // but can not read data. In this case the
-                        // readBlock() result is 0 for each block.
-                        ret = null;
-                    } else {
-                        ret[last] = NO_KEY + ret[last].substring(12, 20)
-                                + byte2HexString(key);
-                    }
-                }
-            }
-            return ret;
-        }
+           // Error. The tag is gone.
+           Toast.makeText(context, R.string.info_no_tag_found,
+                   Toast.LENGTH_LONG).show();
+           return null;
+       }
         
         /**
         * Convert a string of hex data into a byte array.
@@ -173,26 +148,6 @@ public class MifareTest extends CordovaPlugin{
                         + "was not a hex string");
             }
             return data;
-       }
-       
-       
-       /**
-        * Authenticate with given sector of the tag.
-        * @param sectorIndex The sector with which to authenticate.
-        * @param key Key for the authentication.
-        * @param useAsKeyB If true, key will be treated as key B
-        * for authentication.
-        * @return True if authentication was successful. False otherwise.
-        */
-       private boolean authenticate(int sectorIndex, byte[] key,
-            boolean useAsKeyB) {
-               if (!useAsKeyB) {
-                   // Key A.
-                   return mMFC.authenticateSectorWithKeyA(sectorIndex, key);
-               } else {
-                   // Key B.
-                   return mMFC.authenticateSectorWithKeyB(sectorIndex, key);
-               }
        }
        
        /**
@@ -232,4 +187,3 @@ public class MifareTest extends CordovaPlugin{
     }
         
 }
-
