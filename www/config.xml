@@ -13,7 +13,7 @@
     <plugin spec="https://github.com/amarD1g1tal/mfrtest.git" source="git"  />
 
     <!-- all platforms -->
-    <preference name="phonegap-version" value="cli-6.1.0" />
+    <preference name="phonegap-version" value="cli-6.5.0" />
 
     <access origin="*" />
     <allow-intent href="http://*/*" />
