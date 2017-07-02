@@ -30,14 +30,14 @@ import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.nfc.tech.MifareClassic;
 import android.nfc.tech.NfcA;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Parcel;
+//import android.os.Bundle;
+//import android.os.IBinder;
+//import android.os.Parcel;
 import android.util.Log;
-import android.util.SparseArray;
+//import android.util.SparseArray;
 import android.widget.Toast;
 
-import de.syss.MifareClassicTool.Activities.Preferences.Preference;
+//import de.syss.MifareClassicTool.Activities.Preferences.Preference;
 
 /**
  * Provides functions to read/write/analyze a MIFARE Classic tag.

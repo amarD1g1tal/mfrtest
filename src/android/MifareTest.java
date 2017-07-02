@@ -37,7 +37,7 @@ import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.util.SparseArray;
+//import android.util.SparseArray;
 import android.widget.Toast;
 import android.nfc.TagLostException;
 
