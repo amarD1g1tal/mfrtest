@@ -26,6 +26,7 @@
     </config-file>
 
     <source-file src="src/android/MifareTest.java" target-dir="src/net/digitaledu/mifaretest/"/>
+    <source-file src="src/android/MCReader.java" target-dir="src/net/digitaledu/mifaretest/"/>
   </platform>
 
 </plugin>
