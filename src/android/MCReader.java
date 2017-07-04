@@ -50,7 +50,7 @@ public class MCReader {
     private MCReader(Tag tag) {
         MifareClassic tmpMFC = null;
         try {
-            tmpMFC = MifareClassic.get(tag);
+            tmpMFC = get(tag);
         } catch (Exception e) {
             Log.e("String=>", "Could not create MIFARE Classic reader for the"
                     + "provided tag (even after patching it).");
