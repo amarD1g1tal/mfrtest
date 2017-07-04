@@ -95,9 +95,14 @@ public class MifareTest extends CordovaPlugin{
            new Thread(new Runnable() {
                @Override
                public void run() {
-                   // Get key map from glob. variable.
-                   mRawDump = reader.readSector(0,"FFFFFFFFFFFF",false);
-
+                   try {
+                            // Get key map from glob. variable.
+                          mRawDump = reader.readSector(0,"FFFFFFFFFFFF",false);
+                    } catch(Exception e) {
+                      // If it fails, write the error message to screen
+                           e.printStackTrace(); 
+                    }
+                   
                    reader.close();
                }
            }).start();
