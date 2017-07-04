@@ -12,9 +12,9 @@ import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.nfc.tech.MifareClassic;
 import android.nfc.tech.NfcA;
-//import android.os.Bundle;
-//import android.os.IBinder;
-//import android.os.Parcel;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcel;
 import android.util.Log;
 //import android.util.SparseArray;
 //import android.widget.Toast;
@@ -38,19 +38,19 @@ public class MCReader {
 
     private final MifareClassic mMFC;
 //    private SparseArray<byte[][]> mKeyMap = new SparseArray<byte[][]>();
-    private int mKeyMapStatus = 0;
-    private int mLastSector = -1;
-    private int mFirstSector = 0;
-    private ArrayList<byte[]> mKeysWithOrder;
+//    private int mKeyMapStatus = 0;
+//    private int mLastSector = -1;
+//    private int mFirstSector = 0;
+//    private ArrayList<byte[]> mKeysWithOrder;
 
     /**
      * Initialize a MIFARE Classic reader for the given tag.
      * @param tag The tag to operate on.
      */
     private MCReader(Tag tag) {
-        MCReader tmpMFC = null;
+        MifareClassic tmpMFC = null;
         try {
-            tmpMFC = MCReader.get(tag);
+            tmpMFC = MifareClassic.get(tag);
         } catch (Exception e) {
             Log.e("String=>", "Could not create MIFARE Classic reader for the"
                     + "provided tag (even after patching it).");
