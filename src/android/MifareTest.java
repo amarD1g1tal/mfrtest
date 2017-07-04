@@ -88,7 +88,7 @@ public class MifareTest extends CordovaPlugin{
         */
        private void readTag() {
            mRawDump=null;
-           final MCReader reader = checkForTagAndCreateReader(this);
+           final MCReader reader = checkForTagAndCreateReader();
            if (reader == null) {
                return;
            }
@@ -110,7 +110,7 @@ public class MifareTest extends CordovaPlugin{
         * @param context The Context in which the error Toast will be shown.
         * @return A connected {@link MCReader} or "null" if no tag was present.
         */
-       public MCReader checkForTagAndCreateReader(Context context) {
+       public MCReader checkForTagAndCreateReader() {
            MCReader reader;
            boolean tagLost = false;
            // Check for tag.
