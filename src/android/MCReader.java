@@ -54,7 +54,7 @@ public class MCReader {
         } catch (Exception e) {
             Log.e("String=>", "Could not create MIFARE Classic reader for the"
                     + "provided tag (even after patching it).");
-            throw e;
+//            throw e;
         }
         mMFC = tmpMFC;
     }
